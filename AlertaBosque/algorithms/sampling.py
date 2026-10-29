@@ -16,7 +16,15 @@ def prior_sample(network, rng: random.Random) -> dict:
       network.probability(variable, 1, event), usando el evento parcial.
     """
     # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    muestra = {}
+    for variable in network.variables:
+        # Los padres ya tienen valor porque las variables vienen en orden topológico
+        prob_uno = network.probability(variable, 1, muestra)
+        if rng.random() < prob_uno:
+            muestra[variable] = 1
+        else:
+            muestra[variable] = 0
+    return muestra
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
 
@@ -42,5 +50,22 @@ def sampling_ask(network, query, evidence, samples, rng, reject=False):
     if evidence and not reject:
         raise ValueError("Muestreo a priori estima marginales; use rechazo con evidencia")
     # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    conteos = {0: 0, 1: 0}
+    aceptadas = 0
+    for _ in range(samples):
+        muestra = prior_sample(network, rng)
+        if reject:
+            # Se descarta la muestra si no coincide con la evidencia
+            compatible = True
+            for variable, valor in evidence.items():
+                if muestra[variable] != valor:
+                    compatible = False
+            if not compatible:
+                continue
+        conteos[muestra[query]] += 1
+        aceptadas += 1
+
+    if aceptadas == 0:
+        return None, 0
+    return normalize(conteos), aceptadas
     # FIN DEL BLOQUE DEL ESTUDIANTE
