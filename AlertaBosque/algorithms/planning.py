@@ -24,7 +24,7 @@ def action_value(mdp, state, action, values):
     - No vuelva a sumar la recompensa del terminal en su valor:
       values[terminal] es cero.
     """
-    # TODO: Add your code here
+
     valor_q = 0.0
     for sucesor, prob in mdp.transitions(state, action):
         recompensa = mdp.reward(state, action, sucesor)
@@ -58,7 +58,7 @@ def value_iteration(mdp, tolerance=1e-8, max_iterations=1000):
     values = dict.fromkeys(mdp.states, 0.0)
     history, deltas = [values.copy()], []
     for _ in range(max_iterations):
-        # TODO: Add your code here
+        
         nuevos = {}
         for estado in mdp.states:
             acciones = mdp.actions(estado)
@@ -71,7 +71,7 @@ def value_iteration(mdp, tolerance=1e-8, max_iterations=1000):
         delta = max(abs(nuevos[estado] - values[estado]) for estado in mdp.states)
         values = nuevos
         converged = delta < tolerance
-        # FIN DEL BLOQUE DEL ESTUDIANTE
+       
         # Copias para la animación y empaquetado del resultado.
         history.append(values.copy())
         deltas.append(delta)
@@ -90,7 +90,6 @@ def extract_policy(mdp, values):
     - Reutilice action_value: no basta elegir el vecino de mayor valor.
     - Respete mdp.actions: desempate N, E, S, W conservando el primero.
     """
-    # TODO: Add your code here
     politica = {}
     for estado in mdp.states:
         acciones = mdp.actions(estado)
@@ -107,4 +106,4 @@ def extract_policy(mdp, values):
                 mejor_valor = valor_q
         politica[estado] = mejor_accion
     return politica
-    # FIN DEL BLOQUE DEL ESTUDIANTE
+    
