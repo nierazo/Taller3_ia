@@ -25,7 +25,12 @@ def action_value(mdp, state, action, values):
       values[terminal] es cero.
     """
     # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    valor_q = 0.0
+    for sucesor, prob in mdp.transitions(state, action):
+        recompensa = mdp.reward(state, action, sucesor)
+        # Los terminales valen cero, así que su recompensa solo se suma al entrar
+        valor_q += prob * (recompensa + mdp.discount * values[sucesor])
+    return valor_q
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
 
@@ -54,7 +59,18 @@ def value_iteration(mdp, tolerance=1e-8, max_iterations=1000):
     history, deltas = [values.copy()], []
     for _ in range(max_iterations):
         # TODO: Add your code here
-        raise NotImplementedError("Complete este bloque TODO")
+        nuevos = {}
+        for estado in mdp.states:
+            acciones = mdp.actions(estado)
+            if not acciones:
+                # Los terminales se mantienen en cero
+                nuevos[estado] = 0.0
+            else:
+                # Barrido sincrónico: se usa solo el diccionario del barrido anterior
+                nuevos[estado] = max(action_value(mdp, estado, a, values) for a in acciones)
+        delta = max(abs(nuevos[estado] - values[estado]) for estado in mdp.states)
+        values = nuevos
+        converged = delta < tolerance
         # FIN DEL BLOQUE DEL ESTUDIANTE
         # Copias para la animación y empaquetado del resultado.
         history.append(values.copy())
@@ -75,5 +91,20 @@ def extract_policy(mdp, values):
     - Respete mdp.actions: desempate N, E, S, W conservando el primero.
     """
     # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    politica = {}
+    for estado in mdp.states:
+        acciones = mdp.actions(estado)
+        if not acciones:
+            politica[estado] = None
+            continue
+        mejor_accion = None
+        mejor_valor = None
+        for accion in acciones:
+            valor_q = action_value(mdp, estado, accion, values)
+            # Con > estricto se conserva la primera acción en empate (N, E, S, W)
+            if mejor_valor is None or valor_q > mejor_valor:
+                mejor_accion = accion
+                mejor_valor = valor_q
+        politica[estado] = mejor_accion
+    return politica
     # FIN DEL BLOQUE DEL ESTUDIANTE
