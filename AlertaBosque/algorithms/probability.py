@@ -14,11 +14,12 @@ def normalize(weights: dict) -> dict:
     """
     # TODO: Add your code here
     respuesta = weights
-    
-    if respuesta[0] < 0:
-        respuesta[0] = 0
-    if respuesta[1] < 0:
-        respuesta[1] = 0
+    if len(respuesta) == 0:
+        return None
+    if respuesta[0] < 0 or respuesta[0] == None:
+        return None
+    if respuesta[1] < 0 or respuesta[1] == None:
+        return None
     
     suma_total = respuesta[0] + respuesta[1]
     normaliza_0 =  respuesta[0]/suma_total
